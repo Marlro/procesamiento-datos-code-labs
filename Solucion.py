@@ -108,55 +108,28 @@ if __name__ == "__main__":
     # Guardar datos
     df.to_csv("datos_limpios.csv")
 
-import argparse
-import requests
-import io
-import pandas as pd
+import sys
 
 def descargar_datos(url):
     response = requests.get(url)
     if response.status_code != 200:
         raise Exception(f"Error al descargar los datos: {response.status_code}")
 
-    with io.open("datos.csv", "w", encoding="utf-8") as f:
+    with open("datos.csv", "w", encoding="utf-8") as f:
         f.write(response.text)
 
-def limpiar_datos(df):
-    # Verificar valores faltantes
-    if df.isnull().values.any():
-        raise Exception("Existen valores faltantes en los datos")
-
-    # Verificar filas repetidas
-    if df.duplicated().values.any():
-        raise Exception("Existen filas repetidas en los datos")
-
-    # Verificar valores atípicos
-    for col in df.columns:
-        if pd.api.types.is_numeric_dtype(df[col]):
-            # Eliminar valores fuera de 3 desviaciones estándar
-            df = df[np.abs(df[col] - df[col].mean()) <= 3 * df[col].std()]
-
-    # Crear columna de categorías de edad
-    df["edad_categoria"] = pd.cut(df["age"], [0, 12, 19, 39, 59, np.inf], labels=["Niño", "Adolescente", "Jóvenes adulto", "Adulto", "Adulto mayor"])
-
-    return df
-
-def main():
-    parser = argparse.ArgumentParser(description="Procesa datos de insuficiencia cardíaca")
-    parser.add_argument("--url", type=str, help="https://www.geeksforgeeks.org/how-to-use-sys-argv-in-python.csv")
-    args = parser.parse_args()
-
-    # Descargar datos
-    descargar_datos(args.url)
-
-    # Cargar datos
-    df = pd.read_csv("datos.csv")
-
-    # Limpiar datos
-    df = limpiar_datos(df)
-
-    # Guardar datos
-    df.to_csv("datos_limpios.csv")
-
 if __name__ == "__main__":
-    main()
+    # Obtener la URL de los datos de la línea de comandos
+    if len(sys.argv) < 2:
+        print("Por favor, pasa la URL de los datos como argumento.")
+        exit(1)
+
+    url = sys.argv[1]
+
+    # Verificar que la URL tenga un esquema
+    if not url.startswith("http://") or not url.startswith("https://"):
+        raise Exception("La URL debe tener un esquema (http:// o https://)")
+
+    # Descargar los datos
+    descargar_datos(url)
+
