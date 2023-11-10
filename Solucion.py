@@ -213,3 +213,105 @@ fig = px.scatter_3d(
 
 # Mostrar el gráfico
 fig.show()
+
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# Cargar los datos
+df = pd.read_csv("datos.csv")
+
+# Eliminar las columnas objetivo y edad
+df = df.drop(columns=["is_dead", "edad", "edad_categoría"])
+
+# Convertir el DataFrame a un NumPy array
+X = df.values
+
+# Obtener el vector objetivo
+y = df["edad"].values
+
+# Ajustar el modelo de regresión lineal
+reg = LinearRegression()
+reg.fit(X, y)
+
+# Predecir las edades
+y_pred = reg.predict(X)
+
+# Calcular el error cuadrático medio
+mse = np.mean((y_pred - y)**2)
+
+print(f"Error cuadrático medio: {mse}")
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+# Cargar los datos
+df = pd.read_csv("datos.csv")
+
+# Eliminar la columna categoria_edad
+df = df.drop(columns=["edad_categoría"])
+
+# Obtener el vector objetivo
+y = df["is_dead"].values
+
+# Graficar la distribución de clases
+plt.hist(y)
+plt.xlabel("Clase")
+plt.ylabel("Frecuencia")
+plt.show()
+
+# Partición del dataset en conjunto de entrenamiento y test
+X_train, X_test, y_train, y_test = train_test_split(
+    df.values, y, test_size=0.25, stratify=y
+)
+
+# Ajustar un árbol de decisión
+tree = DecisionTreeClassifier(max_depth=3)
+tree.fit(X_train, y_train)
+
+# Calcular el accuracy sobre el conjunto de test
+y_pred = tree.predict(X_test)
+accuracy = np.mean(y_pred == y_test)
+
+print(f"Accuracy: {accuracy}")
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+# Cargar los datos
+df = pd.read_csv("datos.csv")
+
+# Eliminar la columna categoria_edad
+df = df.drop(columns=["edad_categoría"])
+
+# Obtener el vector objetivo
+y = df["is_dead"].values
+
+# Partición del dataset en conjunto de entrenamiento y test
+X_train, X_test, y_train, y_test = train_test_split(
+    df.values, y, test_size=0.25, stratify=y
+)
+
+# Ajustar un random forest
+rf = RandomForestClassifier(n_estimators=100, max_depth=3)
+rf.fit(X_train, y_train)
+
+# Calcular la matriz de confusión
+cm = confusion_matrix(y_test, rf.predict(X_test))
+
+# Calcular F1-Score
+f1 = f1_score(y_test, rf.predict(X_test))
+
+# Imprimir el accuracy
+print(f"Accuracy: {accuracy_score(y_test, rf.predict(X_test))}")
+
+# Imprimir la matriz de confusión
+print(cm)
+
+# Imprimir el F1-Score
+print(f"F1-Score: {f1}")
