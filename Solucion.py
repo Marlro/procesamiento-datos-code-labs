@@ -146,3 +146,70 @@ plt.hist(edades, bins=100)
 plt.xlabel("Edad")
 plt.ylabel("Frecuencia")
 plt.show()
+
+import matplotlib.pyplot as plt
+
+# Cargar los datos
+df = pd.read_csv("datos.csv")
+
+# Obtener las cantidades por categoría
+anémicos = df["anemia"].sum()
+diabéticos = df["diabetes"].sum()
+fumadores = df["is_smoker"].sum()
+muertos = df["is_dead"].sum()
+
+# Crear las gráficas de pastel
+fig, ax = plt.subplots(2, 2, figsize=(10, 10))
+
+ax[0, 0].pie([anémicos], labels=["Anémicos"], colors=["#ff0000"])
+ax[0, 1].pie([diabéticos], labels=["Diabéticos"], colors=["#00ff00"])
+ax[1, 0].pie([fumadores], labels=["Fumadores"], colors=["#0000ff"])
+ax[1, 1].pie([muertos], labels=["Muertos"], colors=["#ffff00"])
+
+# Agregar título y leyenda a las gráficas
+fig.suptitle("Distribución de condiciones médicas", fontsize=20)
+ax[0, 0].set_title("Anémicos")
+ax[0, 1].set_title("Diabéticos")
+ax[1, 0].set_title("Fumadores")
+ax[1, 1].set_title("Muertos")
+
+# Mostrar la gráfica
+plt.show()
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+# Cargar los datos
+df = pd.read_csv("datos.csv")
+
+# Eliminar las columnas objetivo y categoria_edad
+df = df.drop(columns=["is_dead", "edad_categoría"])
+
+# Convertir el DataFrame a un NumPy array
+X = df.values
+
+# Obtener el vector objetivo
+y = df["is_dead"].values
+
+# Realizar la reducción de dimensionalidad
+X_embedded = TSNE(
+    n_components=3,
+    learning_rate='auto',
+    init='random',
+    perplexity=3
+).fit_transform(X)
+
+# Crear el gráfico de dispersión 3D
+fig = px.scatter_3d(
+    x=X_embedded[:, 0],
+    y=X_embedded[:, 1],
+    z=X_embedded[:, 2],
+    color=y,
+    color_continuous_scale="Spectral",
+    title="Distribución de pacientes con insuficiencia cardíaca"
+)
+
+# Mostrar el gráfico
+fig.show()
