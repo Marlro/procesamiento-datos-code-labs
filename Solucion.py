@@ -133,3 +133,16 @@ if __name__ == "__main__":
     # Descargar los datos
     descargar_datos(url)
 
+import matplotlib.pyplot as plt
+
+# Cargar los datos
+df = pd.read_csv("datos.csv")
+
+# Obtener la distribución de edades
+edades = df["age"]
+
+# Graficar el histograma
+plt.hist(edades, bins=100)
+plt.xlabel("Edad")
+plt.ylabel("Frecuencia")
+plt.show()
